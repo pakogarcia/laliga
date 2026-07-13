@@ -61,6 +61,52 @@ Una vez generado el dataset `LaLiga_Dataset_Final.csv`:
 * **Modelado:** Random Forest (para goles), XGBoost (para 1X2 multiclase).
 * **MLOps:** FastAPI para inferencia, Streamlit para visualización.
 
+
+Para ejecutar el predictor en tu entorno local, es necesario mantener dos terminales (PowerShell o CMD) activas simultáneamente, ya que el sistema separa el **servidor de datos** de la **interfaz visual**.
+
+### Paso 1: Activar el Entorno Virtual
+
+Abre una terminal en la carpeta del proyecto y activa tu entorno:
+
+```powershell
+.\env_futbol\Scripts\activate
+
+```
+
+### Paso 2: Iniciar el Motor de Inferencia (Terminal 1)
+
+Esta terminal mantendrá viva la API que realiza los cálculos matemáticos de la IA.
+
+1. Ejecuta el siguiente comando:
+```powershell
+uvicorn api_predicciones:app --reload
+
+```
+
+
+2. **Importante:** No cierres esta ventana. Deberías ver un mensaje indicando que el servidor está corriendo en `http://127.0.0.1:8000`.
+
+### Paso 3: Iniciar la Interfaz Web (Terminal 2)
+
+Abre una **segunda terminal** en la misma carpeta, activa el entorno virtual nuevamente y ejecuta la web:
+
+1. Ejecuta el comando:
+```powershell
+streamlit run app_web.py
+
+```
+
+
+2. Automáticamente se abrirá tu navegador predeterminado con la aplicación en `http://localhost:8501`.
+
+---
+
+### 💡 Notas para el Usuario
+
+* **Orden de ejecución:** Siempre debes lanzar primero el comando de `uvicorn` (Terminal 1) antes que el de `streamlit` (Terminal 2).
+* **Actualización de datos:** Si añades nuevos partidos a tus archivos CSV, recuerda ejecutar primero `python entrenar_modelos.py` para que la IA aprenda de los nuevos datos antes de consultar la web.
+* **Cierre del sistema:** Para apagar todo, simplemente cierra ambas terminales (o pulsa `Ctrl + C` en cada una de ellas).
+
 ## Autor
 
 Proyecto desarrollado por Pako García.

@@ -30,6 +30,12 @@ El sistema se divide en tres capas fundamentales:
 
 ### 1. Preparación de Datos (ETL)
 
+*Se recomienda activar un entorno e instalar estas librerías*
+
+```
+pip install pandas requests openmeteo-requests requests-cache retry matplotlib seaborn scikit-learn xgboost fastapi uvicorn streamlit joblib
+```
+
 Para generar el dataset base, sigue el flujo de procesamiento:
 
 1. `python auditor_equipos.py` (Validación de coordenadas).

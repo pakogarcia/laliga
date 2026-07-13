@@ -1,89 +1,62 @@
+# LaLiga Data Analytics & Predictive Engine
 
-# LaLiga Data Analytics
+Este repositorio contiene la arquitectura completa de **ETL (Extracción, Transformación y Carga)** y el **Pipeline de Machine Learning** para el análisis predictivo de partidos de la Primera División Española (LaLiga).
 
-Este repositorio contiene la arquitectura de extracción, transformación y carga (ETL) de datos para un Trabajo de Fin de Máster centrado en el análisis predictivo de partidos de fútbol de la Primera División Española (LaLiga).
+El proyecto integra datos estadísticos, meteorológicos y sistemas de ranking Elo para alimentar modelos de IA capaces de predecir resultados (1X2) y mercado de goles.
 
-El proyecto cruza tres fuentes de información fundamentales para el análisis de Machine Learning:
-1. **Estadísticas de Juego y Cuotas:** Histórico de partidos y valor de mercado (Bet365 & Mercado Medio).
-2. **Meteorología Histórica:** Temperatura, lluvia y viento el día exacto de cada partido extraído vía API (Open-Meteo).
-3. **Sistema Elo:** Puntuación histórica del estado de forma real de los clubes.
+## 🏗️ Arquitectura del Proyecto
 
----
+El sistema se divide en tres capas fundamentales:
 
-## Requisitos e Instalación
+1. **Capa de Datos (ETL):** Procesamiento de estadísticas, meteorología histórica (Open-Meteo) y cálculo de sistemas de puntuación Elo.
+2. **Capa de Modelado (Entrenamiento):** Pipeline de entrenamiento que serializa modelos mediante `joblib` (XGBoost y Random Forest).
+3. **Capa de Inferencia (Despliegue):** API REST (FastAPI) y Dashboard interactivo (Streamlit) para predicciones en tiempo real.
 
-Para ejecutar este proyecto, es necesario tener instalado Python 3.x. Se recomienda encarecidamente utilizar un entorno virtual.
+## 🛠️ Estructura del Repositorio
 
-1. **Crear y activar el entorno virtual:**
-  ```bash
-  python -m venv env_futbol
-  env_futbol\Scripts\activate
-
-```
-
-2. **Instalar las dependencias:**
-```bash
-pip install pandas requests openmeteo-requests requests-cache retry matplotlib seaborn
-
-```
-
-
-
----
-
-## Estructura del Proyecto
-
-* `SP1_total.csv`: Dataset original limpio con el histórico de partidos y cuotas (formato punto y coma `;`).
-* `EloSP1.csv`: Historial de puntuaciones Elo de los equipos de LaLiga.
-* `coordenadas_equipos.csv`: Diccionario geográfico con la Latitud y Longitud de los estadios (necesario para el clima).
-* `auditor_equipos.py`: Script de *Data Quality* que verifica que todos los equipos históricos tengan sus coordenadas registradas antes del procesamiento.
-* `enriquecer_clima.py`: Script principal de extracción meteorológica. Incluye lógica de guardado continuo para reanudar la descarga en caso de superar el límite de la API (soporte para cambio de IP/VPN).
-* `fusionar_elo_clima.py`: Script de unión final que cruza el dataset meteorológico con el archivo Elo, calculando la Diferencia de Elo (`dif_elo`) para el modelado.
-
----
-
-## Flujo de Ejecución (Pipeline)
-
-Para reproducir el dataset final desde cero, sigue este orden estricto:
-
-### Paso 1: Auditoría de Datos
-
-Ejecuta el auditor para asegurar que no falta ningún equipo en el diccionario de coordenadas:
-
-```bash
-python auditor_equipos.py
+```text
+/Resultados
+├── entrenar_modelos.py     # Pipeline de entrenamiento (IA)
+├── api_predicciones.py     # API REST (Servidor)
+├── app_web.py              # Dashboard interactivo (Frontend)
+├── auditor_equipos.py      # Data Quality del dataset
+├── enriquecer_clima.py     # Extracción API meteorológica
+├── fusionar_elo_clima.py   # Fusión y cálculo de variables
+└── README.md
 
 ```
 
-*(Si falta algún equipo, añádelo manualmente a `coordenadas_equipos.csv` y vuelve a ejecutar).*
+## 🚀 Guía de Ejecución
 
-### Paso 2: Descarga Meteorológica
+### 1. Preparación de Datos (ETL)
 
-Inicia la consulta masiva a la API de Open-Meteo:
+Para generar el dataset base, sigue el flujo de procesamiento:
 
-```bash
-python enriquecer_clima.py
+1. `python auditor_equipos.py` (Validación de coordenadas).
+2. `python enriquecer_clima.py` (Descarga meteorológica masiva).
+3. `python fusionar_elo_clima.py` (Cálculo de `dif_elo` y creación del dataset final).
 
-```
+### 2. Entrenamiento y Producción
 
-> **⚠️ Nota sobre límites de API:** Este script está diseñado para realizar guardados automáticos. Si la API bloquea el acceso por exceso de peticiones (Error 429), el script se detendrá de forma segura. Simplemente cambia de IP usando una VPN y vuelve a lanzar el mismo comando. El código saltará los partidos ya procesados y continuará donde lo dejó. Generará el archivo temporal `SP1_con_clima.csv`.
+Una vez generado el dataset `LaLiga_Dataset_Final.csv`:
 
-### Paso 3: Fusión con Elo (Dataset Final)
+1. **Entrenar Modelos:** Ejecuta `python entrenar_modelos.py`. Esto creará los archivos `.pkl` necesarios para la predicción.
+2. **Activar Servidor (API):** Ejecuta `uvicorn api_predicciones:app`. (Esto levantará el servidor en el puerto 8000).
+3. **Lanzar Interfaz Web:** Ejecuta `streamlit run app_web.py`. Accede a `http://localhost:8501` en tu navegador.
 
-Una vez terminado el proceso meteorológico, cruza los datos con el rendimiento deportivo:
+## 📋 Requisitos Técnicos
 
-```bash
-python fusionar_elo_clima.py
+* **Lenguaje:** Python 3.x
+* **Librerías principales:** `pandas`, `xgboost`, `scikit-learn`, `fastapi`, `uvicorn`, `streamlit`, `joblib`.
 
-```
+## 📈 Tecnologías Utilizadas
 
-### Resultado Final
-
-Se generará el archivo definitivo **`LaLiga_Dataset_Final.csv`** (separado por comas `,`), listo para ser importado en cuadernos de Jupyter (`.ipynb`) para el entrenamiento de modelos predictivos.
-
----
+* **ETL:** Pandas (Merge_asof), Open-Meteo API.
+* **Modelado:** Random Forest (para goles), XGBoost (para 1X2 multiclase).
+* **MLOps:** FastAPI para inferencia, Streamlit para visualización.
 
 ## Autor
 
-*Proyecto desarrollado por Pako García (Análisis de Datos).*
+Proyecto desarrollado por Pako García.
 
+---

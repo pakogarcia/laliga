@@ -23,7 +23,7 @@ Para ejecutar este proyecto, es necesario tener instalado Python 3.x. Se recomie
 
 2. **Instalar las dependencias:**
 ```bash
-pip install pandas requests openmeteo-requests requests-cache retry
+pip install pandas requests openmeteo-requests requests-cache retry matplotlib seaborn
 
 ```
 

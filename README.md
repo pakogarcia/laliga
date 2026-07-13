@@ -1,5 +1,5 @@
 
-# ⚽ LaLiga Data Analytics - TFM
+# LaLiga Data Analytics
 
 Este repositorio contiene la arquitectura de extracción, transformación y carga (ETL) de datos para un Trabajo de Fin de Máster centrado en el análisis predictivo de partidos de fútbol de la Primera División Española (LaLiga).
 
@@ -10,7 +10,7 @@ El proyecto cruza tres fuentes de información fundamentales para el análisis d
 
 ---
 
-## 🛠️ Requisitos e Instalación
+## Requisitos e Instalación
 
 Para ejecutar este proyecto, es necesario tener instalado Python 3.x. Se recomienda encarecidamente utilizar un entorno virtual.
 
@@ -31,7 +31,7 @@ pip install pandas requests openmeteo-requests requests-cache retry
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 * `SP1_total.csv`: Dataset original limpio con el histórico de partidos y cuotas (formato punto y coma `;`).
 * `EloSP1.csv`: Historial de puntuaciones Elo de los equipos de LaLiga.
@@ -42,7 +42,7 @@ pip install pandas requests openmeteo-requests requests-cache retry
 
 ---
 
-## 🚀 Flujo de Ejecución (Pipeline)
+## Flujo de Ejecución (Pipeline)
 
 Para reproducir el dataset final desde cero, sigue este orden estricto:
 
@@ -77,16 +77,13 @@ python fusionar_elo_clima.py
 
 ```
 
-### 🎉 Resultado Final
+### Resultado Final
 
 Se generará el archivo definitivo **`LaLiga_Dataset_Final.csv`** (separado por comas `,`), listo para ser importado en cuadernos de Jupyter (`.ipynb`) para el entrenamiento de modelos predictivos.
 
 ---
 
-## 🎓 Autor
+## Autor
 
-*Proyecto desarrollado como Trabajo de Fin de Máster en Análisis de Datos.*
+*Proyecto desarrollado por Pako García (Análisis de Datos).*
 
-```
-
-```
